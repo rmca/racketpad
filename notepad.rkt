@@ -25,7 +25,7 @@
                        (setopenfile 
                         (path->string
                          (put-file "Open File" f #f #f "txt" null '(("Any" "*.*")))))
-                         (send t save-file openfilename (send t get-file-format) #t)))
+                         (send t save-file openfilename 'text #t)))
 
 (define save-file (lambda (mi ce)
                     (send t save-file openfilename (send t get-file-format) #t)))
@@ -43,6 +43,7 @@
 (define cut (lambda (mi ce) (send t do-edit-operation 'cut)))
 (define paste (lambda (mi ce) (send t do-edit-operation 'paste)))
 (define delete (lambda (mi ce) (send t do-edit-operation 'kill)))
+(define selectall (lambda (mi ce) (send t do-edit-operation 'select-all)))
 
 ; Menu
 (define fm (new menu% [label "File"] [parent m]))
@@ -57,6 +58,7 @@
 (define ecut (new menu-item% [label "Cut"] [parent em] [callback cut]))
 (define epaste (new menu-item% [label "Paste"] [parent em] [callback paste]))
 (define edel (new menu-item% [label "Delete"] [parent em] [callback delete]))
+(define eselectall (new menu-item% [label "Select All"] [parent em] [callback selectall]))
 
 ((current-text-keymap-initializer)
  (send t get-keymap))
