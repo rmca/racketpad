@@ -28,7 +28,9 @@
                          (send t save-file openfilename 'text #t)))
 
 (define save-file (lambda (mi ce)
-                    (send t save-file openfilename (send t get-file-format) #t)))
+                    (if (equal? #f openfilename)
+                        (save-file-as mi ce)
+                        (send t save-file openfilename (send t get-file-format) #t))))
 
 (define new-file (lambda (mi ce)
                    (setopenfile "Untitled")
