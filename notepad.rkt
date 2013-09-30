@@ -6,9 +6,9 @@
                                        "Untitled" 
                                        openfilename)))
 
-(define setopenfile (lambda (filename)
-                      (set! openfilename filename)
-                      (send f set-label (string-append (getopenfilename) " - " appname))))
+(define (setopenfile filename)
+  (set! openfilename filename)
+  (send f set-label (string-append (getopenfilename) " - " appname)))
 
 ; Top-level window
 (define f (new frame% [label "Untitled - RacketPad"]
@@ -21,31 +21,31 @@
 
 ; Callbacks
 
-(define save-file-as (lambda (mi ce)
+(define (save-file-as mi ce)
                        (setopenfile 
                         (path->string
                          (put-file "Open File" f #f #f "txt" null '(("Any" "*.*")))))
-                         (send t save-file openfilename 'text #t)))
+                         (send t save-file openfilename 'text #t))
 
-(define save-file (lambda (mi ce)
+(define (save-file mi ce)
                     (if (equal? #f openfilename)
                         (save-file-as mi ce)
-                        (send t save-file openfilename (send t get-file-format) #t))))
+                        (send t save-file openfilename (send t get-file-format) #t)))
 
-(define new-file (lambda (mi ce)
+(define (new-file mi ce)
                    (setopenfile "Untitled")
-                   (send t erase)))
+                   (send t erase))
 
-(define open-file (lambda (mi ce)
+(define (open-file mi ce)
                     (setopenfile (path->string
                          (get-file "Open File" f #f #f "txt" null '(("Any" "*.txt")))))
-                    (send t load-file (string->path openfilename))))
+                    (send t load-file (string->path openfilename)))
 
-(define undo (lambda (mi ce) (send t undo)))
-(define cut (lambda (mi ce) (send t do-edit-operation 'cut)))
-(define paste (lambda (mi ce) (send t do-edit-operation 'paste)))
-(define delete (lambda (mi ce) (send t do-edit-operation 'kill)))
-(define selectall (lambda (mi ce) (send t do-edit-operation 'select-all)))
+(define (undo mi ce) (send t undo))
+(define (cut mi ce) (send t do-edit-operation 'cut))
+(define (paste mi ce) (send t do-edit-operation 'paste))
+(define (delete mi ce) (send t do-edit-operation 'kill))
+(define (selectall mi ce) (send t do-edit-operation 'select-all))
 
 ; Menu
 (define fm (new menu% [label "File"] [parent m]))
