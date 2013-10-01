@@ -2,9 +2,10 @@
 
 (define appname "RacketPad")
 (define openfilename #f)
-(define (getopenfilename) (if (equal? #f openfilename) 
-                                       "Untitled" 
-                                       openfilename))
+(define (getopenfilename) 
+  (if (equal? #f openfilename) 
+      "Untitled" 
+      openfilename))
 
 (define (setopenfile filename)
   (set! openfilename filename)
