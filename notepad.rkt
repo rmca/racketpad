@@ -11,6 +11,8 @@
   (set! openfilename filename)
   (send f set-label (string-append (getopenfilename) " - " appname)))
 
+(define wordwrapping #f)
+
 ; Top-level window
 (define f (new frame% [label "Untitled - RacketPad"]
                       [width 800] [height 600]))
@@ -42,26 +44,24 @@
                 (get-file "Open File" f #f #f "txt" null '(("Any" "*.txt")))))
   (send t load-file (string->path openfilename)))
 
-(define (undo mi ce) (send t undo))
-(define (cut mi ce) (send t do-edit-operation 'cut))
-(define (paste mi ce) (send t do-edit-operation 'paste))
-(define (delete mi ce) (send t do-edit-operation 'kill))
-(define (selectall mi ce) (send t do-edit-operation 'select-all))
+(define (wordwrap mi ce)
+  (set! wordwrapping (not wordwrapping))
+  (send t auto-wrap wordwrapping))
+
+(define (selectfont mi ce) (get-font-from-user "Font" f))
 
 ; Menu
 (define fm (new menu% [label "File"] [parent m]))
-
 (define fnew (new menu-item% [label "New"] [parent fm] [callback new-file] [shortcut #\n]))
 (define fopen (new menu-item% [label "Open"] [parent fm] [callback open-file] [shortcut #\o]))
 (define fsaveas (new menu-item% [label "Save As"] [parent fm] [callback save-file-as]))
 (define fsave (new menu-item% [label "Save"] [parent fm] [callback save-file] [shortcut #\s]))
 
 (define em (new menu% [label "Edit"] [parent m]))
-(define eundo (new menu-item% [label "Undo"] [parent em] [callback undo] [shortcut #\z]))
-(define ecut (new menu-item% [label "Cut"] [parent em] [callback cut] [shortcut #\x]))
-(define epaste (new menu-item% [label "Paste"] [parent em] [callback paste] [shortcut #\v]))
-(define edel (new menu-item% [label "Delete"] [parent em] [callback delete]))
-(define eselectall (new menu-item% [label "Select All"] [parent em] [callback selectall] [shortcut #\a]))
+(append-editor-operation-menu-items em)
+
+(define fmm (new menu% [label "Format"] [parent m]))
+(define fww (new menu-item% [label "Word Wrap"] [parent fmm] [callback wordwrap]))
 
 ((current-text-keymap-initializer)
  (send t get-keymap))
