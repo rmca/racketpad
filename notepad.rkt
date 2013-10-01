@@ -2,9 +2,9 @@
 
 (define appname "RacketPad")
 (define openfilename #f)
-(define getopenfilename (lambda () (if (equal? #f openfilename) 
+(define (getopenfilename) (if (equal? #f openfilename) 
                                        "Untitled" 
-                                       openfilename)))
+                                       openfilename))
 
 (define (setopenfile filename)
   (set! openfilename filename)
@@ -22,24 +22,24 @@
 ; Callbacks
 
 (define (save-file-as mi ce)
-                       (setopenfile 
-                        (path->string
-                         (put-file "Open File" f #f #f "txt" null '(("Any" "*.*")))))
-                         (send t save-file openfilename 'text #t))
+  (setopenfile 
+   (path->string
+    (put-file "Open File" f #f #f "txt" null '(("Any" "*.*")))))
+  (send t save-file openfilename 'text #t))
 
 (define (save-file mi ce)
-                    (if (equal? #f openfilename)
-                        (save-file-as mi ce)
-                        (send t save-file openfilename (send t get-file-format) #t)))
+  (if (equal? #f openfilename)
+      (save-file-as mi ce)
+      (send t save-file openfilename (send t get-file-format) #t)))
 
 (define (new-file mi ce)
-                   (setopenfile "Untitled")
-                   (send t erase))
+  (setopenfile "Untitled")
+  (send t erase))
 
 (define (open-file mi ce)
-                    (setopenfile (path->string
-                         (get-file "Open File" f #f #f "txt" null '(("Any" "*.txt")))))
-                    (send t load-file (string->path openfilename)))
+  (setopenfile (path->string
+                (get-file "Open File" f #f #f "txt" null '(("Any" "*.txt")))))
+  (send t load-file (string->path openfilename)))
 
 (define (undo mi ce) (send t undo))
 (define (cut mi ce) (send t do-edit-operation 'cut))
@@ -50,17 +50,17 @@
 ; Menu
 (define fm (new menu% [label "File"] [parent m]))
 
-(define fnew (new menu-item% [label "New"] [parent fm] [callback new-file]))
-(define fopen (new menu-item% [label "Open"] [parent fm] [callback open-file]))
+(define fnew (new menu-item% [label "New"] [parent fm] [callback new-file] [shortcut #\n]))
+(define fopen (new menu-item% [label "Open"] [parent fm] [callback open-file] [shortcut #\o]))
 (define fsaveas (new menu-item% [label "Save As"] [parent fm] [callback save-file-as]))
-(define fsave (new menu-item% [label "Save"] [parent fm] [callback save-file]))
+(define fsave (new menu-item% [label "Save"] [parent fm] [callback save-file] [shortcut #\s]))
 
 (define em (new menu% [label "Edit"] [parent m]))
-(define eundo (new menu-item% [label "Undo"] [parent em] [callback undo]))
-(define ecut (new menu-item% [label "Cut"] [parent em] [callback cut]))
-(define epaste (new menu-item% [label "Paste"] [parent em] [callback paste]))
+(define eundo (new menu-item% [label "Undo"] [parent em] [callback undo] [shortcut #\z]))
+(define ecut (new menu-item% [label "Cut"] [parent em] [callback cut] [shortcut #\x]))
+(define epaste (new menu-item% [label "Paste"] [parent em] [callback paste] [shortcut #\v]))
 (define edel (new menu-item% [label "Delete"] [parent em] [callback delete]))
-(define eselectall (new menu-item% [label "Select All"] [parent em] [callback selectall]))
+(define eselectall (new menu-item% [label "Select All"] [parent em] [callback selectall] [shortcut #\a]))
 
 ((current-text-keymap-initializer)
  (send t get-keymap))
