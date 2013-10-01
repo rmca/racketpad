@@ -20,6 +20,7 @@
 ; Editor stuff
 (define c (new editor-canvas% [parent f]))
 (define t (new text%))
+(send c set-editor t)
 (define m (new menu-bar% [parent f]))
 
 ; Callbacks
@@ -62,6 +63,7 @@
 
 (define fmm (new menu% [label "Format"] [parent m]))
 (define fww (new menu-item% [label "Word Wrap"] [parent fmm] [callback wordwrap]))
+(append-editor-font-menu-items fmm)
 
 ((current-text-keymap-initializer)
  (send t get-keymap))
